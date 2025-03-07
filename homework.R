@@ -67,9 +67,8 @@ glimpse(ds)
 #> (station should be the level and city should be the label)
 #> Use fct_count to check that there are 365 days of data for each city 
 
-### NEED HELP ###
 ds <- ds %>%
-  mutate(city = factor(stations, levels = stations, labels = ))
+  mutate(city = factor(station, levels = stations, labels = cities))
 
 fct_count(ds$city)
 
@@ -102,28 +101,28 @@ glimpse(ds_all)
 #> (Seattle, 20, Charlotte 12, Phoenix 12, etc...)
 #> Don't save this summary over the original dataset!
 
-### DOESNT WORK ###
+count_extreme <- . %>%
+    mutate(extreme_day = actual_min_temp == record_min_temp |
+          actual_max_temp == record_max_temp, extreme_day = as.numeric(extreme_day)) %>%
+  summarize(extreme_days = sum(extreme_day))
 
-count_extreme <- function(ds) {
-  ds %>%
-    mutate(extreme_day = actual_min_temp == record_min_temp) |
-          (actual_max_temp == record_max_temp)) %>%
+ds %>% 
   group_by(city) %>%
-  summarize(extreme_days = sum(extreme_day, na.rm = TRUE)) %>%
+  count_extreme %>% 
   arrange(desc(extreme_days))
-}
 
-extreme_days_summary <- count_extreme()
-print(extreme_days_summary)
 
 # QUESTION 6
 #> Pull out the month from the date and make "month" a factor
 #> Split the tibble by month into a list of tibbles 
 
 months <- ds_all %>%
-  mutate(month = factor(month(date, label =  TRUE, abbr = TRUE))) %>%
-  group_split(month)
+  mutate(month = month(date, label =  TRUE, abbr = TRUE)) %>%
+  group_by(month) %>% 
+  group_split(month) %>% 
+  set_names(levels(month))
 months
+
 
 # QUESTION 7
 #> For each month, determine the correlation between the actual_precipitation
@@ -131,9 +130,10 @@ months
 #> Use a for loop, and print the month along with the resulting correlation
 #> Look at the documentation for the ?cor function if you've never used it before
 
+### SKIPPED ### 
 
-### SKIPPED ###
-
+months <- ds$date %>% lubridate::month(ds$date, label = TRUE, abbr = TRUE) %>%
+  for (ds in get_month ) {
 
 # QUESTION 8
 #> Use the Data Explorer package to plot boxplots of all of the numeric variables in the dataset

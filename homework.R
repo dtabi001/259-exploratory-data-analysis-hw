@@ -67,10 +67,11 @@ glimpse(ds)
 #> (station should be the level and city should be the label)
 #> Use fct_count to check that there are 365 days of data for each city 
 
+### NEED HELP ###
 ds <- ds %>%
-  mutate(city = factor(stations))
+  mutate(city = factor(stations, levels = stations, labels = ))
 
-fct_count(ds$city)  
+fct_count(ds$city)
 
 # QUESTION 4
 #> Since we're scientists, let's convert all the temperatures to C
